@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+	<body>
+        
+        <h1>Goal of the game</h1>
+		<p>Need to complete Work 1(Will take 3 sec to complete) as well as Work2(Will take 5 sec to complete). Work2 button is visible only after clicking Work1 button</p>
+        <p>Completing work2 doesn't depend on completing work1</p>
+        
+        <h1>Synchronous Call</h1>
+        
+		<button id="work1">Work1</button>
+        <button id="work2" style="display:none">Work2</button>
+        
+        
+        <h4>Points To Learn</h4>
+        <ul>
+            <li>But since we are making a synchronous call in work1, we can start work2 only after work1 is completed in this scenario</li>
+            <li>Total time consumed for doing work1 + work2 is 8sec</li>
+            <li>We are blocking the eventStack since we are making  synchronous call here</li>
+            <li>Browser is constrained by what we do in JavaScript. Browser likes to repaints the screen every (1/60) sec</li>
+            <li>Browser can't render if the eventStack is not empty. When the render is blocked you can't click the things. you cann't select the text etc., Hence in this example once you click Work1, you can't click on work2 for the next 5 sec. </li>
+        </ul>
+        
+        
+        <h2>Lets see the same above example by making asynchronous call</h2>
+        <h1>Asynchronous Call</h1>
+        <button id="work3">Work1</button>
+        <button id="work4" style="display:none">Work2</button>
+        <h4>Points To Learn</h4>
+        <ul>
+            <li>But since we are making a Asynchronous call in work1, we can start work2 before work1 is completed</li>
+            <li>Total time consumed for doing work1 + work2 < 8 sec</li>
+            <li>We are not blocking the eventStack since we are making  asynchronous calls here</li>
+            <l1>Once the aynchronous calls are done the callbacks will be kept in callBack Queue</l1>
+            <li>Call backs will be given to eventStack when the eventStack is empty by eventLoop.</li>
+        </ul>
+		<script>	
+			document.getElementById("work1").addEventListener("click", function(){
+				var time = new Date().getTime();
+                // Below s synchronous call hich gets completed only after 5 sec
+				while( time+3000 > new Date().getTime() ) {
+					//some other work Work1
+				}
+                alert("Work1 Done");
+                document.getElementById("work1").style.display = 'none';
+                document.getElementById("work2").style.display = 'inline-block';
+			});
+            document.getElementById("work2").addEventListener("click", function(){
+                document.getElementById("work2").style.display = 'none';
+                document.getElementById("work1").style.display = 'inline-block';
+                var time = new Date().getTime();
+                while( time+5000 > new Date().getTime() ) {
+					//some other work Work1
+				}
+                alert("Work2 Done");
+			});
+            document.getElementById("work3").addEventListener("click", function(){
+                //Asynchronous call
+				setTimeout(function(){
+                    alert("Work1 Done");
+                }, 3000)
+                document.getElementById("work3").style.display = 'none';
+                document.getElementById("work4").style.display = 'inline-block';
+			});
+            document.getElementById("work4").addEventListener("click", function(){
+                document.getElementById("work4").style.display = 'none';
+                document.getElementById("work3").style.display = 'inline-block';
+                var time = new Date().getTime();
+                //Asynchronous call
+				setTimeout(function(){
+                    alert("Work2 Done");
+                }, 5000)
+			});
+		</script>
+	</body>
+
+</html>
